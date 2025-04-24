@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DataViz Studio Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #1e1e2f;
+      color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: 60px;
+      background-color: #2b2b44;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      font-size: 20px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .topbar .nav-options {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 14px;
+    }
+
+    .topbar .nav-options a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .main {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    .sidebar-left {
+      width: 220px;
+      background-color: #2a2a40;
+      padding: 20px;
+    }
+
+    .sidebar-left h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-left input[type="file"] {
+      background-color: #3f3f5c;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      width: 100%;
+    }
+
+
+
+/* Upload button styling */
+.upload-btn {
+  padding: 8px 10px; /* Balanced button size */
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  margin-bottom: 50px;
+  margin-top: 20px;
+}
+
+.upload-btn:hover {
+  background-color: #7f6ae6;
+}
+    .canvas-area {
+      flex: 1;
+      background-color: #ffffff;
+      margin: 20px;
+      border-radius: 15px;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar-right {
+      width: 340px;
+      background-color: #2a2a40;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .sidebar-right h3 {
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .chart-grid {
+       display: grid;
+       grid-template-columns: repeat(2, 1fr);  /* Two charts per row */
+       gap: 16px;
+
+    }
+
+    .chart-card {
+      background-color: #33334d;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .chart-card:hover {
+      transform: scale(1.05);
+      background-color: #3f3f5c;
+    }
+
+    .chart-card i {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #9f7aea;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Scrollbar styling */
+    .sidebar-right::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #table-preview {
+    max-height: 300px;   /* Set max height */
+    overflow-y: auto;    /* Enable vertical scrolling */
+}
+.modal-body {
+    color: #000000; /* Set text color to dark */
+}
+
+#proceed-btn {
+    margin-top: 20px;
+}
+
+
+    .sidebar-right::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    DataViz Studio
+    <div class="nav-options">
+      <a href="#">User</a>
+      <a href="#">Home</a>
+      <a href="#">Download</a>
+      <a href="#">Logout</a>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="sidebar-left">
+
+  <h3>Upload Dataset</h3>
+  <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" id="file-input">
+    <hr style="margin: 0; border-color: #444;">
+    <div id="file-error" class="file-error-alert" style="display: none;">Please select a file!</div>
+    <button type="submit" class="upload-btn">Upload</button>
+
+  </form>
+
+ <!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="previewModalLabel" style="color: #000000;">File Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-body">
+          <p style="color: #000000;">File has been uploaded successfully!</p>
+          <p style="color: #000000;">Select a chart type from the sidebar to generate visualizations.</p>
+          <div id="table-preview" style="max-height: 300px; overflow-y: auto;"></div>
+          <button id="proceed-btn" class="btn btn-primary">Proceed</button>
+      </div>
+      
+        {% if preview %}
+          {{ preview | safe }}
+        {% else %}
+          <p>No preview available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Ensure jQuery is loaded
+  $(document).ready(function() {
+      // Close modal when "Proceed" button is clicked
+      $('#proceed-btn').on('click', function() {
+          var modal = bootstrap.Modal.getInstance(document.getElementById('previewModal'));
+          modal.hide(); // Hide the modal
+      });
+  });
+</script>
+
+<!-- Script to auto-open modal if preview exists -->
+{% if show_modal %}
+  <script>
+    window.onload = function() {
+      var modal = new bootstrap.Modal(document.getElementById('previewModal'));
+      modal.show();
+    }
+  </script>
+{% endif %}
+
+ 
+
+
+
+<h3>Chart Color</h3>
+<p style="font-size: 13px; color: #ccc; margin-bottom: 8px;">Choose a custom color for your chart appearance.</p>
+<input type="color" name="chart-color" value="#9f7aea" style="background-color: transparent; border: none; padding: 6px; border-radius: 6px; width: 100%; height: 40px; cursor: pointer;">
+
+<h3 style="margin-top: 20px;">Chart Style</h3>
+<select name="chart-style" style="margin-top: 10px; background-color: #3f3f5c; color: #fff; border: none; padding: 10px; border-radius: 6px; width: 100%;">
+  <option value="classic">Classic</option>
+  <option value="modern">Modern</option>
+  <option value="minimal">Minimal</option>
+  <option value="3d">3D</option>
+  <option value="flat">Flat</option>
+</select>
+
+<!-- Notes Section -->
+<h3 style="margin-top: 30px;">Notes</h3>
+<textarea placeholder="Write your notes here..." rows="4" style="width: 100%; background-color: #3f3f5c; color: #fff; border: none; padding: 10px; border-radius: 6px; resize: none; font-size: 14px;"></textarea>
+
+<!-- Recent Actions -->
+<h3 style="margin-top: 30px;">Recent Actions</h3>
+<div id="recent-actions" style="background-color: #3f3f5c; color: #fff; padding: 10px; border-radius: 6px; font-size: 13px; max-height: 120px; overflow-y: auto;">
+
+
+</div>
+
+    </div>
+
+    <div id="dashboard-canvas" class="canvas-area">
+
+      
+          <!-- Dynamic chart rendering area -->
+    </div>
+    <div class="sidebar-right">
+      <h3>Select a Chart</h3>
+      <div class="chart-grid">
+        <div class="chart-card" data-chart="bar_chart"><i class="fas fa-chart-bar"></i><div class="chart-title">Bar Chart</div></div>
+        <div class="chart-card" data-chart="line_chart"><i class="fas fa-chart-line"></i><div class="chart-title">Line Chart</div></div>
+        <div class="chart-card" data-chart="pie_chart"><i class="fas fa-chart-pie"></i><div class="chart-title">Pie Chart</div></div>
+        <div class="chart-card" data-chart="area_chart"><i class="fas fa-chart-area"></i><div class="chart-title">Area Chart</div></div>
+        <div class="chart-card" data-chart="scatter_plot"><i class="fas fa-braille"></i><div class="chart-title">Scatter Plot</div></div>
+        <div class="chart-card" data-chart="heatmap"><i class="fas fa-th"></i><div class="chart-title">Heatmap</div></div>
+        <div class="chart-card" data-chart="treemap"><i class="fas fa-tree"></i><div class="chart-title">Treemap</div></div>
+        <div class="chart-card" data-chart="sunburst"><i class="fas fa-certificate"></i><div class="chart-title">Sunburst</div></div>
+        <div class="chart-card" data-chart="gauge"><i class="fas fa-tachometer-alt"></i><div class="chart-title">Gauge</div></div>
+        <div class="chart-card" data-chart="funnel"><i class="fas fa-filter"></i><div class="chart-title">Funnel</div></div>
+        <div class="chart-card" data-chart="radar"><i class="fas fa-crosshairs"></i><div class="chart-title">Radar</div></div>
+        <div class="chart-card" data-chart="histogram"><i class="fas fa-signal"></i><div class="chart-title">Histogram</div></div>
+        <div class="chart-card" data-chart="polar_chart"><i class="fas fa-wave-square"></i><div class="chart-title">Polar</div></div>
+        <div class="chart-card" data-chart="bubble_chart"><i class="fas fa-cubes"></i><div class="chart-title">Bubble Chart</div></div>
+        <div class="chart-card" data-chart="stacked_bar"><i class="fas fa-bars"></i><div class="chart-title">Stacked Bar</div></div>
+        <div class="chart-card" data-chart="candlestick"><i class="fas fa-project-diagram"></i><div class="chart-title">Candlestick</div></div>
+        <div class="chart-card" data-chart="box_plot"><i class="fas fa-layer-group"></i><div class="chart-title">Box Plot</div></div>
+        <div class="chart-card" data-chart="bullet_graph"><i class="fas fa-bolt"></i><div class="chart-title">Bullet Graph</div></div>
+        <div class="chart-card" data-chart="radar_polar"><i class="fas fa-rocket"></i><div class="chart-title">Radar Polar</div></div>
+        <div class="chart-card" data-chart="donut_chart"><i class="fas fa-palette"></i><div class="chart-title">Donut Chart</div></div>
+        <div class="chart-card" data-chart="sankey_diagram"><i class="fas fa-sitemap"></i><div class="chart-title">Sankey Diagram</div></div>
+        <div class="chart-card" data-chart="network_graph"><i class="fas fa-object-group"></i><div class="chart-title">Network Graph</div></div>
+        <div class="chart-card" data-chart="chord_diagram"><i class="fas fa-cogs"></i><div class="chart-title">Chord Diagram</div></div>
+        <div class="chart-card" data-chart="waterfall_chart"><i class="fas fa-sliders-h"></i><div class="chart-title">Waterfall Chart</div></div>
+        <div class="chart-card" data-chart="venn_diagram"><i class="fas fa-recycle"></i><div class="chart-title">Venn Diagram</div></div>
+        <div class="chart-card" data-chart="streamgraph"><i class="fas fa-waveform"></i><div class="chart-title">Streamgraph</div></div>
+        <div class="chart-card" data-chart="step_line_chart"><i class="fas fa-chart-line"></i><div class="chart-title">Step Line Chart</div></div>
+        <div class="chart-card" data-chart="stacked_area"><i class="fas fa-ellipsis-h"></i><div class="chart-title">Stacked Area</div></div>
+        <div class="chart-card" data-chart="pyramid_chart"><i class="fas fa-poll-h"></i><div class="chart-title">Pyramid Chart</div></div>
+        <div class="chart-card" data-chart="table"><i class="fas fa-table"></i><div class="chart-title">Table</div></div>
+        <div class="chart-card" data-chart="flow_diagram"><i class="fas fa-arrow-alt-circle-right"></i><div class="chart-title">Flow Diagram</div></div>
+        <div class="chart-card" data-chart="timeline"><i class="fas fa-calendar-day"></i><div class="chart-title">Timeline</div></div>
+        <div class="chart-card" data-chart="sunburst_tree"><i class="fas fa-code-branch"></i><div class="chart-title">Sunburst Tree</div></div>
+        <div class="chart-card" data-chart="bubble_map"><i class="fas fa-cogs"></i><div class="chart-title">Bubble Map</div></div>
+        <div class="chart-card" data-chart="dependency_graph"><i class="fas fa-network-wired"></i><div class="chart-title">Dependency Graph</div></div>
+        <div class="chart-card" data-chart="treemap_plot"><i class="fas fa-project-diagram"></i><div class="chart-title">Treemap Plot</div></div>
+        <div class="chart-card" data-chart="control_chart"><i class="fas fa-cog"></i><div class="chart-title">Control Chart</div></div>
+        <div class="chart-card" data-chart="pareto_chart"><i class="fas fa-signal"></i><div class="chart-title">Pareto Chart</div></div>
+        <div class="chart-card" data-chart="stack"><i class="fas fa-layer-group"></i><div class="chart-title">Stack</div></div>
+        <div class="chart-card" data-chart="streamgraph_2"><i class="fas fa-water"></i><div class="chart-title">Streamgraph</div></div>
+        <div class="chart-card" data-chart="sankey"><i class="fas fa-road"></i><div class="chart-title">Sankey</div></div>
+        <div class="chart-card" data-chart="flow_chart"><i class="fas fa-route"></i><div class="chart-title">Flow Chart</div></div>
+        <div class="chart-card" data-chart="chord_diagram_2"><i class="fas fa-draw-polygon"></i><div class="chart-title">Chord Diagram</div></div>
+        <div class="chart-card" data-chart="circular_barplot"><i class="fas fa-compass"></i><div class="chart-title">Circular Barplot</div></div>
+        <div class="chart-card" data-chart="parallel_coordinates"><i class="fas fa-shapes"></i><div class="chart-title">Parallel Coordinates</div></div>
+        <div class="chart-card" data-chart="surface_plot"><i class="fas fa-city"></i><div class="chart-title">3D Surface Plot</div></div>
+        <div class="chart-card" data-chart="geo_map"><i class="fas fa-map-marked-alt"></i><div class="chart-title">Geo Map</div></div>
+        <div class="chart-card" data-chart="bubble_map_2"><i class="fas fa-globe"></i><div class="chart-title">Bubble Map</div></div>
+        <div class="chart-card" data-chart="choropleth"><i class="fas fa-map"></i><div class="chart-title">Choropleth</div></div>
+        <div class="chart-card" data-chart="dumbbell_chart"><i class="fas fa-ellipsis-h"></i><div class="chart-title">Dumbbell Chart</div></div>
+        <div class="chart-card" data-chart="mosaic_plot"><i class="fas fa-columns"></i><div class="chart-title">Mosaic Plot</div></div>
+        <div class="chart-card" data-chart="density_plot"><i class="fas fa-clone"></i><div class="chart-title">Density Plot</div></div>
+        <div class="chart-card" data-chart="stacked_area_2"><i class="fas fa-columns"></i><div class="chart-title">Stacked Area</div></div>
+        <div class="chart-card" data-chart="lollipop_chart"><i class="fas fa-dot-circle"></i><div class="chart-title">Lollipop Chart</div></div>
+        <div class="chart-card" data-chart="violin_plot"><i class="fas fa-asterisk"></i><div class="chart-title">Violin Plot</div></div>
+        <div class="chart-card" data-chart="time_series"><i class="fas fa-chart-area"></i><div class="chart-title">Time Series</div></div>
+        <div class="chart-card" data-chart="waffle_chart"><i class="fas fa-percentage"></i><div class="chart-title">Waffle Chart</div></div>
+        <div class="chart-card" data-chart="decision_tree"><i class="fas fa-code-branch"></i><div class="chart-title">Decision Tree</div></div>
+        <div class="chart-card" data-chart="waterfall"><i class="fas fa-balance-scale"></i><div class="chart-title">Waterfall</div></div>
+        <div class="chart-card" data-chart="combo_chart"><i class="fas fa-chart-line"></i><div class="chart-title">Combo Chart</div></div>
+        <div class="chart-card" data-chart="decomposition_tree"><i class="fas fa-network-wired"></i><div class="chart-title">Decomposition Tree</div></div>
+        <div class="chart-card" data-chart="ribbon_chart"><i class="fas fa-vector-square"></i><div class="chart-title">Ribbon Chart</div></div>
+        <div class="chart-card" data-chart="matrix"><i class="fas fa-align-left"></i><div class="chart-title">Matrix</div></div>
+        <div class="chart-card" data-chart="table_2"><i class="fas fa-th-large"></i><div class="chart-title">Table</div></div>
+        <div class="chart-card" data-chart="smart_narrative"><i class="fas fa-shapes"></i><div class="chart-title">Smart Narrative</div></div>
+        <div class="chart-card" data-chart="hierarchy_slicer"><i class="fas fa-tree"></i><div class="chart-title">Hierarchy Slicer</div></div>
+        <div class="chart-card" data-chart="dot_plot"><i class="fas fa-crosshairs"></i><div class="chart-title">Dot Plot</div></div>
+        <div class="chart-card" data-chart="pie_of_pie_chart"><i class="fas fa-chart-pie"></i><div class="chart-title">Pie-of-Pie Chart</div></div>
+        <div class="chart-card" data-chart="stacked_bar_100"><i class="fas fa-percent"></i><div class="chart-title">100% Stacked Bar</div></div>
+        <div class="chart-card" data-chart="stacked_column_100"><i class="fas fa-bars"></i><div class="chart-title">100% Stacked Column</div></div>
+        <div class="chart-card" data-chart="kpi"><i class="fas fa-cogs"></i><div class="chart-title">KPI</div></div>
+        <div class="chart-card" data-chart="gauge_kpi"><i class="fas fa-equals"></i><div class="chart-title">Gauge KPI</div></div>
+        <div class="chart-card" data-chart="decision_tree_2"><i class="fas fa-code-branch"></i><div class="chart-title">Decision Tree</div></div>
+        <div class="chart-card" data-chart="filled_map"><i class="fas fa-map"></i><div class="chart-title">Filled Map</div></div>
+        <div class="chart-card" data-chart="arcgis_map"><i class="fas fa-globe"></i><div class="chart-title">ArcGIS Map</div></div>
+        <div class="chart-card" data-chart="small_multiples"><i class="fas fa-layer-group"></i><div class="chart-title">Small Multiples</div></div>
+        <div class="chart-card" data-chart="slicer"><i class="fas fa-compress-alt"></i><div class="chart-title">Slicer</div></div>
+        <div class="chart-card" data-chart="qna_visual"><i class="fas fa-poll"></i><div class="chart-title">Q&A Visual</div></div>
+        <div class="chart-card" data-chart="paginated_report"><i class="fas fa-hashtag"></i><div class="chart-title">Paginated Report</div></div>
+        <div class="chart-card" data-chart="sankey_diagram_2"><i class="fas fa-project-diagram"></i><div class="chart-title">Sankey Diagram</div></div>
+      </div>
+    </div>
+    
+    
+  </div>
+
+  <script src="{{ url_for('static', filename='js/chart-handler.js') }}"></script>
+
+</body>
+</html>
