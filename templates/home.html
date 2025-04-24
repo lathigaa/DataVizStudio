@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DataViz Studio - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1f1f2e, #2e2e3f);
+      color: #f0f0f0;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: #2b2b44;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      font-size: 24px;
+      color: #ffffff;
+    }
+
+    header nav a {
+      margin-left: 20px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    header nav a:hover {
+      color: #fff;
+    }
+
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 100px 20px 60px;
+      background: radial-gradient(circle at 10% 10%, #3a3a5f 0%, transparent 70%), radial-gradient(circle at 90% 80%, #4c4c80 0%, transparent 60%);
+      animation: floatBg 20s infinite linear alternate;
+    }
+
+    @keyframes floatBg {
+      0% { background-position: 10% 10%, 90% 80%; }
+      100% { background-position: 20% 15%, 85% 70%; }
+    }
+
+    .hero h2 {
+      font-size: 42px;
+      margin-bottom: 20px;
+      color: #ffffff;
+      animation: fadeIn 1.2s ease-out;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #ccc;
+      max-width: 700px;
+      margin: auto;
+      margin-bottom: 30px;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    .hero .btn {
+      padding: 14px 30px;
+      font-size: 16px;
+      background-color: #9f7aea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      animation: fadeIn 2s ease-out;
+    }
+
+    .hero .btn:hover {
+      background-color: #7e58d2;
+    }
+
+    .section {
+      padding: 60px 40px;
+      background-color: #1e1e2f;
+    }
+
+    .section h3 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 40px;
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .feature-card {
+      background-color: #2b2b44;
+      border-radius: 12px;
+      padding: 30px;
+      width: 280px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .feature-card h4 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .about {
+      max-width: 800px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .about p {
+      font-size: 16px;
+      color: #bbb;
+      line-height: 1.6;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      background-color: #2b2b44;
+      color: #999;
+      font-size: 13px;
+    }
+
+    /* Simple animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>DataViz Studio</h1>
+    <nav>
+      <a href="/home">Home</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="#">Support</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h2>Visualize Like a Pro</h2>
+    <p>Welcome to <strong>DataViz Studio</strong> — your command center for powerful insights. Design stunning dashboards with <strong>80+ visualization types</strong>, full customization, and intelligent charting features.</p>
+    <button class="btn" onclick="location.href='/dashboard'">Start Creating</button>
+  </section>
+
+  <!-- About -->
+<section class="section about" style="position: relative; background: none;">
+  <div style="
+    max-width: 800px;
+    margin: auto;
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    animation: fadeIn 1.5s ease-out;
+  ">
+    <h3 style="font-size: 32px; color: #ffffff; margin-bottom: 20px;">About DataViz Studio</h3>
+    <p style="font-size: 16px; color: #dddddd; line-height: 1.7;">
+      <strong>DataViz Studio</strong> is more than just a dashboarding tool — it’s your creative space for making data speak. With a powerful suite of 80+ chart types, drag-and-drop customization, and full theming control, you can go from raw data to stunning visuals in seconds.
+    </p>
+  </div>
+</section>
+
+
+  <!-- Features -->
+  <section class="section">
+    <h3>Platform Highlights</h3>
+    <div class="features">
+      <div class="feature-card">
+        <h4>80+ Chart Types</h4>
+        <p>Bar, pie, funnel, gauge, scatter, treemap, radar, sankey, sunburst & more — all included.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Live Customization</h4>
+        <p>Modify colors, labels, styles and interactivity directly on your charts.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Upload & Visualize</h4>
+        <p>Upload Excel, CSV or JSON and instantly start creating dashboards.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Secure Login</h4>
+        <p>Professional-grade authentication using OAuth and Email login.</p>
+      </div>
+      <div class="feature-card">
+        <h4>Export & Share</h4>
+        <p>Save dashboards or export visualizations as high-quality images.</p>
+      </div>
+      <div class="feature-card">
+        <h4>User Notes & Logs</h4>
+        <p>Make personal notes and review your recent actions inside the dashboard.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 DataViz Studio. Built with 💡 and 🎨 for data lovers everywhere.
+  </footer>
+
+</body>
+</html>
